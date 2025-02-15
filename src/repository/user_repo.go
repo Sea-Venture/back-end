@@ -5,16 +5,29 @@ import (
 	"seaventures/src/models"
 )
 
-func CreateUser(user *models.User) error {
+func Register(user *models.User) error {
 	return config.DB.Create(user).Error
 }
 
-func GetUsers() ([]models.User, error) {
-	var users []models.User
-	err := config.DB.Find(&users).Error
-	return users, err
+func Login(user *models.User) error {
+	return config.DB.Where("email = ? AND password = ?", user.Email, user.Password).First(user).Error
 }
 
-func UpdateUser(user *models.User) error {
-	return config.DB.Save(user).Error
+func GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	err := config.DB.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
+
+func GetUserByUsername(userName string) (*models.User, error) {
+	var user models.User
+	err := config.DB.Where("user_name = ?", userName).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+

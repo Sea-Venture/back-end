@@ -6,7 +6,7 @@ import (
     "github.com/dgrijalva/jwt-go"
 )
 
-// GenerateJWT generates a new JWT token
+
 func GenerateJWT(userID uint, secretKey string) (string, error) {
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
         "exp":  time.Now().Add(time.Hour * 72).Unix(),

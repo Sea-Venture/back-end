@@ -14,18 +14,21 @@ func main() {
 
 	r := gin.Default()
 
-	// Initialize database
 	config.ConnectDB()
 
-	// Register routes
 	routes.RegisterRoutes(r)
 
-	r.Run(":8080") // Run server on port 8080
+	log.Println("Server running on port 8080")
+	r.Run(":8080")
 }
 
 func loadEnv() {
 	err := godotenv.Load(".env.local")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("env not found")
+		err = godotenv.Load()
+		if err != nil {
+			log.Fatal("error loading env")
+		}
 	}
 }
