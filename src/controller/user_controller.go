@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func RegisterUser(c *gin.Context) {
@@ -35,26 +36,44 @@ func RegisterUser(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
-	var user models.User
-	if err := c.ShouldBindJSON(&user); err != nil {
+	var req struct {
+		Token string `json:"token" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := service.Login(&user)
+	// Parse the Firebase token to extract the email
+	parser := &jwt.Parser{}
+	parsedToken, _, err := parser.ParseUnverified(req.Token, jwt.MapClaims{})
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
 		return
 	}
 
-	secretKey := os.Getenv("JWT_SECRET_KEY")
-	token, err := helpers.GenerateJWT(user.ID, user.Role, secretKey)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token, "user": user})
+	email, ok := claims["email"].(string)
+	if !ok || email == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email not found in token"})
+		return
+	}
+
+	user, err := service.GetUserByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"user":    user,
+	})
 }
 
 func AddProfilePic(c *gin.Context) {
@@ -92,17 +111,13 @@ func ProtectedEndpoint(c *gin.Context) {
 }
 
 func GetUserByEmail(c *gin.Context) {
-	var requestBody struct {
-		Email string `json:"email" binding:"required"`
-	}
-
-	// Bind JSON body
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body or missing email"})
+	email, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	user, err := service.GetUserByEmail(requestBody.Email)
+	user, err := service.GetUserByEmail(email.(string))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -112,13 +127,13 @@ func GetUserByEmail(c *gin.Context) {
 }
 
 func GetUserIdByEmail(c *gin.Context) {
-	email := c.Query("email")
-	if email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
+	email, exists := c.Get("email")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	userID, err := service.GetUserIdByEmail(email)
+	userID, err := service.GetUserIdByEmail(email.(string))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
