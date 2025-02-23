@@ -1,11 +1,11 @@
-package controllers
+package controller
 
 import (
 	"net/http"
 	"os"
 	"seaventures/src/helpers"
 	"seaventures/src/models"
-	services "seaventures/src/service"
+	"seaventures/src/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	err := services.RegisterUser(&user)
+	err := service.RegisterUser(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not create user"})
 		return
@@ -40,7 +40,7 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
-	err := services.Login(&user)
+	err := service.Login(&user)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
@@ -71,13 +71,13 @@ func AddProfilePic(c *gin.Context) {
 		return
 	}
 
-	user, err := services.GetUserById(userID.(uint))
+	user, err := service.GetUserById(userID.(uint))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "User not found"})
 		return
 	}
 
-	err = services.UpdateProfilePic(user, profilePicData.ProfilePic)
+	err = service.UpdateProfilePic(user, profilePicData.ProfilePic)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not update profile picture"})
 		return
