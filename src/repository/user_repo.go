@@ -31,3 +31,16 @@ func GetUserByUsername(userName string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetUserById(id uint) (*models.User, error) {
+    var user models.User
+    err := config.DB.Where("id = ?", id).First(&user).Error
+    if err != nil {
+        return nil, err
+    }
+    return &user, nil
+}
+
+func UpdateUser(user *models.User) error {
+	return config.DB.Save(user).Error
+}
+
