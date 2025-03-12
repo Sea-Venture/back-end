@@ -38,7 +38,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		eventRoutes.POST("/", controller.CreateEvent)
 		eventRoutes.GET("/", controller.GetEvents)
-    }
+	}
 
 	locationRoutes := r.Group("/locations")
 	locationRoutes.Use(middleware.AuthMiddleware())

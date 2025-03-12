@@ -2,8 +2,7 @@ package controller
 
 import (
 	"net/http"
-	"os"
-	"seaventures/src/helpers"
+	"seaventures/src/config"
 	"seaventures/src/models"
 	"seaventures/src/service"
 
@@ -23,14 +22,13 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	secretKey := os.Getenv("JWT_SECRET_KEY")
-	token, err := helpers.GenerateJWT(user.ID, secretKey)
+	token, err := config.GetToken()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "token": token, "user": user})
+	c.JSON(http.StatusCreated, gin.H{"message": "User created successfully", "token": token.AccessToken, "user": user})
 }
 
 func LoginUser(c *gin.Context) {
@@ -46,14 +44,13 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
-	secretKey := os.Getenv("JWT_SECRET_KEY")
-	token, err := helpers.GenerateJWT(user.ID, secretKey)
+	token, err := config.GetToken()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token, "user": user})
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token.AccessToken, "user": user})
 }
 
 func AddProfilePic(c *gin.Context) {
