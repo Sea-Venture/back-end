@@ -24,7 +24,7 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	secretKey := os.Getenv("JWT_SECRET_KEY")
-	token, err := helpers.GenerateJWT(user.ID, secretKey)
+	token, err := helpers.GenerateJWT(user.ID, user.Role, secretKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
@@ -47,7 +47,7 @@ func LoginUser(c *gin.Context) {
 	}
 
 	secretKey := os.Getenv("JWT_SECRET_KEY")
-	token, err := helpers.GenerateJWT(user.ID, secretKey)
+	token, err := helpers.GenerateJWT(user.ID, user.Role, secretKey)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return

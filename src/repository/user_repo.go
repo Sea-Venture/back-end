@@ -44,3 +44,12 @@ func UpdateUser(user *models.User) error {
 	return config.DB.Save(user).Error
 }
 
+func GetRoleByEmail(email string) (string, error) {
+	var user models.User
+	err := config.DB.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		return "", err
+	}
+	return user.Role, nil
+}
+

@@ -26,11 +26,12 @@ func RegisterUser(user *models.User) error {
 	}
 	user.Password = string(hashedPassword)
 
+	user.Role = "user"
+
 	return repository.Register(user)
 }
 
 func Login(user *models.User) error {
-
 	existingUser, err := repository.GetUserByEmail(user.Email)
 	if err != nil {
 		return errors.New("invalid credentials")
@@ -42,6 +43,7 @@ func Login(user *models.User) error {
 	}
 
 	user.ID = existingUser.ID
+	user.Role = existingUser.Role
 
 	return nil
 }
@@ -54,5 +56,5 @@ func UpdateProfilePic(user *models.User, profilePic string) error {
 }
 
 func GetUserById(id uint) (*models.User, error) {
-    return repository.GetUserById(id)
+	return repository.GetUserById(id)
 }
