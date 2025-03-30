@@ -26,6 +26,8 @@ func RegisterUser(user *models.User) error {
 	}
 	user.Password = string(hashedPassword)
 
+	user.Role = "user"
+
 	return repository.Register(user)
 }
 

@@ -50,4 +50,52 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 		locationRoutes.DELETE("/:id", controller.DeleteLocation)
 	}
 
+	activityRoutes := r.Group("/activities")
+	activityRoutes.Use(middleware.AuthMiddleware())
+	{
+		activityRoutes.POST("/", controller.CreateActivity)
+		activityRoutes.GET("/", controller.GetAllActivities)
+		activityRoutes.GET("/:id", controller.GetActivityByID)
+		activityRoutes.PUT("/:id", controller.UpdateActivity)
+		activityRoutes.DELETE("/:id", controller.DeleteActivity)
+		activityRoutes.GET("/desc/:id", controller.GetActivityDescriptionByActivityID)
+	}
+
+	beachRoutes := r.Group("/beaches")
+	beachRoutes.Use(middleware.AuthMiddleware())
+	{
+		beachRoutes.POST("/", controller.CreateBeach)
+		beachRoutes.GET("/", controller.GetAllBeaches)
+		beachRoutes.GET("/:id", controller.GetBeachByID)
+		beachRoutes.PUT("/:id", controller.UpdateBeach)
+		beachRoutes.DELETE("/:id", controller.DeleteBeach)
+		beachRoutes.GET("/desc/:id", controller.GetBeachDescriptionByBeachID)
+	}
+
+	weatherRoutes := r.Group("/weather")
+	weatherRoutes.Use(middleware.AuthMiddleware())
+	{
+		weatherRoutes.GET("/:id", controller.GetWeatherById)
+	}
+
+	guideRoutes := r.Group("/guides")
+	guideRoutes.Use(middleware.AuthMiddleware())
+	{
+		guideRoutes.POST("/", controller.CreateGuide)
+		guideRoutes.GET("/", controller.GetAllGuides)
+		guideRoutes.GET("/:id", controller.GetGuideByID)
+		guideRoutes.PUT("/:id", controller.UpdateGuide)
+		guideRoutes.DELETE("/:id", controller.DeleteGuide)
+	}
+
+	guideListRoutes := r.Group("/lists/guides")
+	guideListRoutes.Use(middleware.AuthMiddleware())
+	{
+		guideListRoutes.GET("/", controller.GetAllGuides)
+		guideListRoutes.GET("/:id", controller.GetGuideByBeachID)
+		guideListRoutes.GET("/activity/:id", controller.GetGuideByActivityID)
+		guideListRoutes.GET("/:id/activities/:id", controller.GetGuideActivitiesByBeachIDAndActivityID)
+
+	}
+
 }

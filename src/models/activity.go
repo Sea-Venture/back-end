@@ -9,8 +9,6 @@ type Activity struct {
 	Name      string    `json:"name"`
 	Desc      string    `json:"desc"`
 	Image     string    `json:"image"`
-	EventID   uint      `json:"event_id"`
-	Event     Event     `json:"event"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

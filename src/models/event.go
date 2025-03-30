@@ -10,6 +10,6 @@ type Event struct {
 	Description string     `json:"description"`
 	CreatedAt   time.Time  `json:"created_at"`
 	SafeDelete  bool       `json:"safe_delete"`
-	Activities  []Activity `gorm:"foreignKey:EventID" json:"activities"`
 	LocationID  uint       `json:"location_id"`
+	ActivityID  uint       `json:"activity_id"`
 }
