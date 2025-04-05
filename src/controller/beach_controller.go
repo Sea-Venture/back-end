@@ -43,6 +43,7 @@ func GetBeachByID(c *gin.Context) {
 	c.JSON(http.StatusOK, beach)
 }
 
+
 func UpdateBeach(c *gin.Context) {
 	id := c.Param("id")
 	var beach models.Beach
@@ -90,4 +91,5 @@ func GetBeachDescriptionByBeachID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"description": description})
 }
+
 
