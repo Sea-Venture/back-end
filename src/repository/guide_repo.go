@@ -17,13 +17,13 @@ func GetAllGuides() ([]models.Guide, error) {
 
 func GetGuideByID(id string) (*models.Guide, error) {
 	var guide models.Guide
-	err := config.DB.Where("guide_id = ?", id).First(&guide).Error
+	err := config.DB.Where("id = ?", id).First(&guide).Error
 	return &guide, err
 }
 
 func UpdateGuide(id string, updatedGuide *models.Guide) error {
 	var guide models.Guide
-	err := config.DB.Where("guide_id = ?", id).First(&guide).Error
+	err := config.DB.Where("id = ?", id).First(&guide).Error
 	if err != nil {
 		return err
 	}
@@ -31,7 +31,7 @@ func UpdateGuide(id string, updatedGuide *models.Guide) error {
 }
 
 func DeleteGuide(id string) error {
-	return config.DB.Where("guide_id = ?", id).Delete(&models.Guide{}).Error
+	return config.DB.Where("id = ?", id).Delete(&models.Guide{}).Error
 }
 
 func GetGuideByBeachID(beachID string) ([]models.Guide, error) {

@@ -19,8 +19,16 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			{
 				authRoutes.POST("/register", controller.RegisterUser)
 				authRoutes.POST("/login", controller.LoginUser)
-				authRoutes.POST("/profile-pic", middleware.AuthMiddleware(), controller.AddProfilePic)
 				authRoutes.POST("/protected", middleware.AuthMiddleware(), controller.ProtectedEndpoint)
+			}
+
+			profileRoutes := userRoutes.Group("/profile")
+			profileRoutes.Use(middleware.AuthMiddleware())
+			{
+				profileRoutes.POST("/", middleware.AuthMiddleware(), controller.GetUserByEmail)
+				profileRoutes.POST("/profile-pic", middleware.AuthMiddleware(), controller.AddProfilePic)
+				profileRoutes.PUT("/role/:id", middleware.AuthMiddleware(), controller.UpdateUserRoleById)
+				profileRoutes.GET("/getid", middleware.AuthMiddleware(), controller.GetUserIdByEmail)
 			}
 
 			// Location routes under /api/user/locations
@@ -46,15 +54,19 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				activityRoutes.GET("/desc/:id", controller.GetActivityDescriptionByActivityID)
 			}
 
-			// Event routes under /api/user/events
+
+
 			eventRoutes := userRoutes.Group("/events")
 			eventRoutes.Use(middleware.AuthMiddleware())
 			{
 				eventRoutes.POST("/", controller.CreateEvent)
 				eventRoutes.GET("/", controller.GetEvents)
+				eventRoutes.GET("/activity/:id", controller.GetEventByActivityID)
+				eventRoutes.GET("/location/:id", controller.GetEventByLocationID)
+				eventRoutes.GET("/activity/location/:location_id/:activity_id", controller.GetEventByLocationIDAndActivityID)
 			}
 
-			// Beach routes under /api/user/beaches
+
 			beachRoutes := userRoutes.Group("/beaches")
 			beachRoutes.Use(middleware.AuthMiddleware())
 			{
@@ -66,14 +78,12 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				beachRoutes.GET("/desc/:id", controller.GetBeachDescriptionByBeachID)
 			}
 
-			// Weather routes under /api/user/weather
 			weatherRoutes := userRoutes.Group("/weather")
 			weatherRoutes.Use(middleware.AuthMiddleware())
 			{
 				weatherRoutes.GET("/:id", controller.GetWeatherById)
 			}
 
-			// Forecast routes under /api/user/forecast
 			forecastRoutes := userRoutes.Group("/forecast")
 			{
 				forecastRoutes.GET("/", func(c *gin.Context) {

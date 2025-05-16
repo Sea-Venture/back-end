@@ -17,13 +17,13 @@ func GetAllBlogs() ([]models.Blog, error) {
 
 func GetBlogByID(id string) (*models.Blog, error) {
     var blog models.Blog
-    err := config.DB.Where("blog_id = ?", id).First(&blog).Error
+    err := config.DB.Where("id = ?", id).First(&blog).Error
     return &blog, err
 }
 
 func UpdateBlog(id string, updatedBlog *models.Blog) error {
     var blog models.Blog
-    err := config.DB.Where("blog_id = ?", id).First(&blog).Error
+    err := config.DB.Where("id = ?", id).First(&blog).Error
     if err != nil {
         return err
     }
@@ -31,5 +31,5 @@ func UpdateBlog(id string, updatedBlog *models.Blog) error {
 }
 
 func DeleteBlog(id string) error {
-    return config.DB.Where("blog_id = ?", id).Delete(&models.Blog{}).Error
+    return config.DB.Where("id = ?", id).Delete(&models.Blog{}).Error
 }
