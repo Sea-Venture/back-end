@@ -1,0 +1,25 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # Trigger action on pushes to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Install sshpass
+        run: sudo apt-get install sshpass
+
+      - name: Deploy to the server using password
+        run: |
+          # Use sshpass with the password secret for SSH login
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "root@$SERVER_IP" "bash seaventure/deploy.sh"
+
+      - name: Notify on Success
+        run: echo "Deployment completed successfully!"
