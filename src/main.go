@@ -33,7 +33,7 @@ func main() {
 }
 
 func loadEnv() {
-	err := godotenv.Load("../.env.local")
+	err := godotenv.Load(".env.local")
 	if err != nil {
 		log.Println("env not found")
 		err = godotenv.Load()
