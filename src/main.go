@@ -29,11 +29,11 @@ func main() {
 	routes.RegisterRoutes(r, db)
 
 	log.Println("Server running on port 8080")
-	r.Run(":8081")
+	r.Run(":8080")
 }
 
 func loadEnv() {
-	err := godotenv.Load(".env.local")
+	err := godotenv.Load("../.env.local")
 	if err != nil {
 		log.Println("env not found")
 		err = godotenv.Load()
