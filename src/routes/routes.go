@@ -1,32 +1,126 @@
 package routes
 
 import (
-    "seaventures/src/controller"
-    "seaventures/src/middleware"
+	"seaventures/src/controller"
+	"seaventures/src/middleware"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func RegisterRoutes(r *gin.Engine) {
-    userRoutes := r.Group("/users")
-    {
-        userRoutes.POST("/", controller.RegisterUser)
-        userRoutes.POST("/login", controller.LoginUser)
-    }
+func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 
-    authRoutes := r.Group("/auth")
-    authRoutes.Use(middleware.AuthMiddleware())
-    {
-        authRoutes.POST("/protected", controller.ProtectedEndpoint)
-    }
+	apiRoutes := r.Group("/api")
+	{
+		// User routes under /api/user
+		userRoutes := apiRoutes.Group("/user")
+		{
+			authRoutes := userRoutes.Group("/auth")
+			{
+				authRoutes.POST("/register", controller.RegisterUser)
+				authRoutes.POST("/login", controller.LoginUser)
+				authRoutes.POST("/protected", middleware.AuthMiddleware(), controller.ProtectedEndpoint)
+			}
 
-    blogRoutes := r.Group("/blogs")
-    blogRoutes.Use(middleware.AuthMiddleware())
-    {
-        blogRoutes.POST("/", controller.CreateBlog)
-        blogRoutes.GET("/", controller.GetBlogs)
-        blogRoutes.GET("/:id", controller.GetBlogByID)
-        blogRoutes.PUT("/:id", controller.UpdateBlog)
-        blogRoutes.DELETE("/:id", controller.DeleteBlog)
-    }
+			profileRoutes := userRoutes.Group("/profile")
+			profileRoutes.Use(middleware.AuthMiddleware())
+			{
+				profileRoutes.POST("/", middleware.AuthMiddleware(), controller.GetUserByEmail)
+				profileRoutes.POST("/profile-pic", middleware.AuthMiddleware(), controller.AddProfilePic)
+				profileRoutes.PUT("/role/:id", middleware.AuthMiddleware(), controller.UpdateUserRoleById)
+				profileRoutes.GET("/getid", middleware.AuthMiddleware(), controller.GetUserIdByEmail)
+			}
+
+			// Location routes under /api/user/locations
+			locationRoutes := userRoutes.Group("/locations")
+			locationRoutes.Use(middleware.AuthMiddleware())
+			{
+				locationRoutes.POST("/", controller.CreateLocation)
+				locationRoutes.GET("/", controller.GetLocations)
+				locationRoutes.GET("/:id", controller.GetLocationByID)
+				locationRoutes.PUT("/:id", controller.UpdateLocation)
+				locationRoutes.DELETE("/:id", controller.DeleteLocation)
+			}
+
+			// Activity routes under /api/user/activities
+			activityRoutes := userRoutes.Group("/activities")
+			activityRoutes.Use(middleware.AuthMiddleware())
+			{
+				activityRoutes.POST("/", controller.CreateActivity)
+				activityRoutes.GET("/", controller.GetAllActivities)
+				activityRoutes.GET("/:id", controller.GetActivityByID)
+				activityRoutes.PUT("/:id", controller.UpdateActivity)
+				activityRoutes.DELETE("/:id", controller.DeleteActivity)
+				activityRoutes.GET("/desc/:id", controller.GetActivityDescriptionByActivityID)
+			}
+
+
+
+			eventRoutes := userRoutes.Group("/events")
+			eventRoutes.Use(middleware.AuthMiddleware())
+			{
+				eventRoutes.POST("/", controller.CreateEvent)
+				eventRoutes.GET("/", controller.GetEvents)
+				eventRoutes.GET("/activity/:id", controller.GetEventByActivityID)
+				eventRoutes.GET("/location/:id", controller.GetEventByLocationID)
+				eventRoutes.GET("/activity/location/:location_id/:activity_id", controller.GetEventByLocationIDAndActivityID)
+			}
+
+
+			beachRoutes := userRoutes.Group("/beaches")
+			beachRoutes.Use(middleware.AuthMiddleware())
+			{
+				beachRoutes.POST("/", controller.CreateBeach)
+				beachRoutes.GET("/", controller.GetAllBeaches)
+				beachRoutes.GET("/:id", controller.GetBeachByID)
+				beachRoutes.PUT("/:id", controller.UpdateBeach)
+				beachRoutes.DELETE("/:id", controller.DeleteBeach)
+				beachRoutes.GET("/desc/:id", controller.GetBeachDescriptionByBeachID)
+			}
+
+			weatherRoutes := userRoutes.Group("/weather")
+			weatherRoutes.Use(middleware.AuthMiddleware())
+			{
+				weatherRoutes.GET("/:id", controller.GetWeatherById)
+			}
+
+			forecastRoutes := userRoutes.Group("/forecast")
+			{
+				forecastRoutes.GET("/", func(c *gin.Context) {
+					controller.GetForecastHandler(c.Writer, c.Request)
+				})
+			}
+		}
+
+		// Guide routes under /api/guide
+		guideRoutes := apiRoutes.Group("/guide")
+		guideRoutes.Use(middleware.AuthMiddleware())
+		{
+			guideRoutes.POST("/", controller.CreateGuide)
+			guideRoutes.GET("/", controller.GetAllGuides)
+			guideRoutes.GET("/:id", controller.GetGuideByID)
+			guideRoutes.PUT("/:id", controller.UpdateGuide)
+			guideRoutes.DELETE("/:id", controller.DeleteGuide)
+
+			// Guide list routes under /api/guide/lists
+			guideListRoutes := guideRoutes.Group("/lists")
+			{
+				guideListRoutes.GET("/", controller.GetAllGuides)
+				guideListRoutes.GET("/:id", controller.GetGuideByBeachID)
+				guideListRoutes.GET("/activity/:id", controller.GetGuideByActivityID)
+				guideListRoutes.GET("/:id/activities/:id", controller.GetGuideActivitiesByBeachIDAndActivityID)
+			}
+		}
+
+		// Blog routes under /api/blogs
+		blogRoutes := apiRoutes.Group("/blogs")
+		blogRoutes.Use(middleware.AuthMiddleware())
+		{
+			blogRoutes.POST("/", controller.CreateBlog)
+			blogRoutes.GET("/", controller.GetBlogs)
+			blogRoutes.GET("/:id", controller.GetBlogByID)
+			blogRoutes.PUT("/:id", controller.UpdateBlog)
+			blogRoutes.DELETE("/:id", controller.DeleteBlog)
+		}
+	}
 }

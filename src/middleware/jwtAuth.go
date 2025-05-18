@@ -29,8 +29,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-
-			
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
@@ -43,7 +41,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			if exp, ok := claims["exp"].(float64); ok {
 				if time.Unix(int64(exp), 0).Before(time.Now()) {
@@ -51,6 +48,9 @@ func AuthMiddleware() gin.HandlerFunc {
 					c.Abort()
 					return
 				}
+			}
+			if userID, ok := claims["sub"].(float64); ok {
+				c.Set("userID", uint(userID))
 			}
 		}
 
