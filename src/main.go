@@ -12,16 +12,16 @@ import (
 
 func main() {
 	loadEnv()
-
+	config.InitFirebase()
 	r := gin.Default()
 
 	// Add CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},                   // Allow requests from your frontend
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Allowed HTTP methods
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // Allowed headers
-		ExposeHeaders:    []string{"Content-Length"},                          // Headers exposed to the client
-		AllowCredentials: true,                                                // Allow cookies and credentials
+		AllowOrigins:     []string{"http://localhost:3000"},                   
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},                  
+		AllowCredentials: true,                                                
 	}))
 
 	db := config.ConnectDB()
@@ -33,7 +33,7 @@ func main() {
 }
 
 func loadEnv() {
-	err := godotenv.Load("../.env.local")
+	err := godotenv.Load(".env.local")
 	if err != nil {
 		log.Println("env not found")
 		err = godotenv.Load()
