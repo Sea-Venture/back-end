@@ -1,25 +1,25 @@
 package controller
 
 import (
-    "encoding/json"
-    "net/http"
+	"encoding/json"
+	"net/http"
 
-    "seaventures/src/service"
+	"seaventures/src/service"
 )
 
 func GetForecastHandler(w http.ResponseWriter, r *http.Request) {
-    city := r.URL.Query().Get("city")
-    if city == "" {
-        http.Error(w, "City parameter is required", http.StatusBadRequest)
-        return
-    }
+	beach := r.URL.Query().Get("beach")
+	if beach == "" {
+		http.Error(w, "Beach parameter is required", http.StatusBadRequest)
+		return
+	}
 
-    forecasts, err := service.GetForecast(city)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	result, err := service.GetForecast(beach)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(forecasts)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
 }

@@ -1,26 +1,23 @@
 package repository
 
 import (
-    "fmt"
-    "io/ioutil"
-    "net/http"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 )
 
-func FetchForecastHTML(city string) (string, error) {
-    url := fmt.Sprintf("https://www.surf-forecast.com/breaks/%s/forecasts/latest/six_day", city)
+func FetchForecastHTML(beach string) (string, error) {
+	url := fmt.Sprintf("https://www.surf-forecast.com/breaks/%s/forecasts/widget/a", beach)
+	response, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("error fetching URL: %v", err)
+	}
+	defer response.Body.Close()
 
-    // Send a GET request
-    response, err := http.Get(url)
-    if err != nil {
-        return "", fmt.Errorf("error fetching URL: %v", err)
-    }
-    defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading response body: %v", err)
+	}
 
-    // Read the response body
-    body, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        return "", fmt.Errorf("error reading response body: %v", err)
-    }
-
-    return string(body), nil
+	return string(body), nil
 }
