@@ -58,3 +58,29 @@ func UpdateProfilePic(user *models.User, profilePic string) error {
 func GetUserById(id uint) (*models.User, error) {
 	return repository.GetUserById(id)
 }
+
+func GetUserByEmail(email string) (*models.User, error) {
+	return repository.GetUserByEmail(email)
+}
+
+func GetRoleByEmail(email string) (string, error) {
+	role, err := repository.GetRoleByEmail(email)
+	if err != nil {
+		return "", err
+	}
+	return role, nil
+}
+
+
+
+func GetUserIdByEmail(email string) (uint, error) {
+	user, err := repository.GetUserByEmail(email)
+	if err != nil {
+		return 0, err
+	}
+	return user.ID, nil
+}
+
+func UpdateUserRoleById(id uint, role string) error {
+	return repository.UpdateUserRoleById(id, role)
+}

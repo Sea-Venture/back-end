@@ -72,4 +72,40 @@ func DeleteEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
 }
 
+func GetEventByActivityID(c *gin.Context) {
+	activityID := c.Param("id")
+	events, err := service.GetEventByActivityID(activityID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, events)
+}
+
+func GetEventByLocationID(c *gin.Context) {
+	locationID := c.Param("id")
+	events, err := service.GetEventByLocationID(locationID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, events)
+}
+
+func GetEventByLocationIDAndActivityID(c *gin.Context) {
+	locationID := c.Param("location_id")
+	activityID := c.Param("activity_id")
+	events, err := service.GetEventByLocationIDAndActivityID(locationID, activityID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, events)
+}
+
+
+
 

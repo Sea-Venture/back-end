@@ -1,0 +1,31 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install sshpass (required for password-based SSH login)
+      - name: Install sshpass
+        run: sudo apt-get install sshpass
+
+      # Step 3: Run deployment script on the server using SSH
+      - name: Deploy to the server using password
+        run: |
+          sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no "root@$SERVER_IP" "bash seaventure/deploy.sh"
+        env:
+          SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}  # This is how you reference your server IP secret
+
+      # Step 4: Notify on Success
+      - name: Notify on Success
+        run: echo "Deployment completed successfully!"

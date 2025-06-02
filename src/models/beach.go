@@ -9,5 +9,5 @@ type Beach struct {
 	BeachDesc  string     `json:"beach_desc"`
 	BeachType  string     `json:"beach_type"`
 	LID        uint       `json:"location_id"`
-	Activities []Activity `gorm:"many2many:beach_activities" json:"activities"` // Many-to-Many relationship
+	Activities []Activity `gorm:"many2many:beach_activities" json:"activities"`
 }

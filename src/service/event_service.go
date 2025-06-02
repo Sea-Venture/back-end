@@ -25,3 +25,15 @@ func UpdateEvent(id string, blog *models.Event) error {
 func DeleteEvent(id string) error {
 	return repository.DeleteEvent(id)
 }
+
+func GetEventByActivityID(activityID string) ([]models.Event, error) {
+	return repository.GetEventByActivityID(activityID)
+}
+
+func GetEventByLocationID(locationID string) ([]models.Event, error) {
+	return repository.GetEventByLocationID(locationID)
+}
+
+func GetEventByLocationIDAndActivityID(locationID string, activityID string) ([]models.Event, error) {
+	return repository.GetEvenByLocationIDAndActivityID(locationID, activityID)
+}
