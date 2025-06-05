@@ -31,7 +31,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			locationRoutes := userRoutes.Group("/locations")
-			locationRoutes.Use(middleware.AuthMiddleware())
 			{
 				locationRoutes.POST("/", controller.CreateLocation)
 				locationRoutes.GET("/", controller.GetLocations)
@@ -51,7 +50,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			eventRoutes := userRoutes.Group("/events")
-			eventRoutes.Use(middleware.AuthMiddleware())
 			{
 				eventRoutes.POST("/", controller.CreateEvent)
 				eventRoutes.GET("/", controller.GetEvents)
@@ -61,7 +59,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			beachRoutes := userRoutes.Group("/beaches")
-			beachRoutes.Use(middleware.AuthMiddleware())
 			{
 				beachRoutes.POST("/", controller.CreateBeach)
 				beachRoutes.GET("/", controller.GetAllBeaches)
@@ -84,7 +81,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 		}
 
 		guideRoutes := apiRoutes.Group("/guide")
-		guideRoutes.Use(middleware.AuthMiddleware())
 		{
 			guideRoutes.POST("/", controller.CreateGuide)
 			guideRoutes.GET("/", controller.GetAllGuides)
