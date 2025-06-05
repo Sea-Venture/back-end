@@ -41,7 +41,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			activityRoutes := userRoutes.Group("/activities")
-			activityRoutes.Use(middleware.AuthMiddleware())
 			{
 				activityRoutes.POST("/", controller.CreateActivity)
 				activityRoutes.GET("/", controller.GetAllActivities)
@@ -103,7 +102,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 		}
 
 		blogRoutes := apiRoutes.Group("/blogs")
-		blogRoutes.Use(middleware.AuthMiddleware())
 		{
 			blogRoutes.POST("/", controller.CreateBlog)
 			blogRoutes.GET("/", controller.GetBlogs)
