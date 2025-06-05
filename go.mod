@@ -12,7 +12,10 @@ require (
 	gorm.io/gorm v1.25.7
 )
 
-require github.com/andybalholm/cascadia v1.3.3 // indirect
+require (
+	github.com/andybalholm/cascadia v1.3.3 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
+)
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.2
