@@ -4,8 +4,6 @@ import (
 	"errors"
 	"seaventures/src/models"
 	"seaventures/src/repository"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func RegisterUser(user *models.User) error {
@@ -20,12 +18,6 @@ func RegisterUser(user *models.User) error {
 		return errors.New("username is already taken")
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	user.Password = string(hashedPassword)
-
 	user.Role = "user"
 
 	return repository.Register(user)
@@ -33,11 +25,6 @@ func RegisterUser(user *models.User) error {
 
 func Login(user *models.User) error {
 	existingUser, err := repository.GetUserByEmail(user.Email)
-	if err != nil {
-		return errors.New("invalid credentials")
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(user.Password))
 	if err != nil {
 		return errors.New("invalid credentials")
 	}

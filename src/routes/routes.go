@@ -12,7 +12,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 
 	apiRoutes := r.Group("/api")
 	{
-		// User routes under /api/user
+
 		userRoutes := apiRoutes.Group("/user")
 		{
 			authRoutes := userRoutes.Group("/auth")
@@ -23,7 +23,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			profileRoutes := userRoutes.Group("/profile")
-			profileRoutes.Use(middleware.AuthMiddleware())
 			{
 				profileRoutes.POST("/", middleware.AuthMiddleware(), controller.GetUserByEmail)
 				profileRoutes.POST("/profile-pic", middleware.AuthMiddleware(), controller.AddProfilePic)
@@ -31,7 +30,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				profileRoutes.GET("/getid", middleware.AuthMiddleware(), controller.GetUserIdByEmail)
 			}
 
-			// Location routes under /api/user/locations
 			locationRoutes := userRoutes.Group("/locations")
 			locationRoutes.Use(middleware.AuthMiddleware())
 			{
@@ -42,7 +40,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				locationRoutes.DELETE("/:id", controller.DeleteLocation)
 			}
 
-			// Activity routes under /api/user/activities
 			activityRoutes := userRoutes.Group("/activities")
 			activityRoutes.Use(middleware.AuthMiddleware())
 			{
@@ -54,8 +51,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				activityRoutes.GET("/desc/:id", controller.GetActivityDescriptionByActivityID)
 			}
 
-
-
 			eventRoutes := userRoutes.Group("/events")
 			eventRoutes.Use(middleware.AuthMiddleware())
 			{
@@ -65,7 +60,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				eventRoutes.GET("/location/:id", controller.GetEventByLocationID)
 				eventRoutes.GET("/activity/location/:location_id/:activity_id", controller.GetEventByLocationIDAndActivityID)
 			}
-
 
 			beachRoutes := userRoutes.Group("/beaches")
 			beachRoutes.Use(middleware.AuthMiddleware())
@@ -79,20 +73,17 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 
 			weatherRoutes := userRoutes.Group("/weather")
-			weatherRoutes.Use(middleware.AuthMiddleware())
 			{
 				weatherRoutes.GET("/:id", controller.GetWeatherById)
 			}
 
 			forecastRoutes := userRoutes.Group("/forecast")
 			{
-				forecastRoutes.GET("/", func(c *gin.Context) {
-					controller.GetForecastHandler(c.Writer, c.Request)
-				})
+				forecastRoutes.GET("/beach", controller.GetForecastHandler)
+				forecastRoutes.GET("/advanced", controller.GetAdvancedForecastHandler)
 			}
 		}
 
-		// Guide routes under /api/guide
 		guideRoutes := apiRoutes.Group("/guide")
 		guideRoutes.Use(middleware.AuthMiddleware())
 		{
@@ -102,7 +93,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			guideRoutes.PUT("/:id", controller.UpdateGuide)
 			guideRoutes.DELETE("/:id", controller.DeleteGuide)
 
-			// Guide list routes under /api/guide/lists
 			guideListRoutes := guideRoutes.Group("/lists")
 			{
 				guideListRoutes.GET("/", controller.GetAllGuides)
@@ -112,7 +102,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 			}
 		}
 
-		// Blog routes under /api/blogs
 		blogRoutes := apiRoutes.Group("/blogs")
 		blogRoutes.Use(middleware.AuthMiddleware())
 		{

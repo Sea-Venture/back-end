@@ -20,4 +20,3 @@ type MultiDayResult struct {
 	WaterTemp string        `json:"water_temp"`
 	Days      []DayForecast `json:"days"`
 }
-

@@ -9,10 +9,6 @@ func Register(user *models.User) error {
 	return config.DB.Create(user).Error
 }
 
-func Login(user *models.User) error {
-	return config.DB.Where("email = ? AND password = ?", user.Email, user.Password).First(user).Error
-}
-
 func GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := config.DB.Where("email = ?", email).First(&user).Error
