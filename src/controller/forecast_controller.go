@@ -1,25 +1,25 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
-
 	"seaventures/src/service"
+
+	"github.com/gin-gonic/gin"
 )
 
-func GetForecastHandler(w http.ResponseWriter, r *http.Request) {
-	beach := r.URL.Query().Get("beach")
+// GET /api/user/forecast/beach?beach=Galle
+func GetForecastHandler(c *gin.Context) {
+	beach := c.Query("beach")
 	if beach == "" {
-		http.Error(w, "Beach parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Beach parameter is required"})
 		return
 	}
 
 	result, err := service.GetForecast(beach)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(result)
+	c.JSON(http.StatusOK, result)
 }

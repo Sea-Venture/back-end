@@ -54,8 +54,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				activityRoutes.GET("/desc/:id", controller.GetActivityDescriptionByActivityID)
 			}
 
-
-
 			eventRoutes := userRoutes.Group("/events")
 			eventRoutes.Use(middleware.AuthMiddleware())
 			{
@@ -65,7 +63,6 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				eventRoutes.GET("/location/:id", controller.GetEventByLocationID)
 				eventRoutes.GET("/activity/location/:location_id/:activity_id", controller.GetEventByLocationIDAndActivityID)
 			}
-
 
 			beachRoutes := userRoutes.Group("/beaches")
 			beachRoutes.Use(middleware.AuthMiddleware())
@@ -86,9 +83,8 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 
 			forecastRoutes := userRoutes.Group("/forecast")
 			{
-				forecastRoutes.GET("/", func(c *gin.Context) {
-					controller.GetForecastHandler(c.Writer, c.Request)
-				})
+				forecastRoutes.GET("/beach", controller.GetForecastHandler)
+				forecastRoutes.GET("/advanced", controller.GetAdvancedForecastHandler)
 			}
 		}
 
