@@ -20,14 +20,15 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 				authRoutes.POST("/register", controller.RegisterUser)
 				authRoutes.POST("/login", controller.LoginUser)
 				authRoutes.POST("/protected", middleware.AuthMiddleware(), controller.ProtectedEndpoint)
+				authRoutes.POST("/email", controller.GetEmailByToken)
 			}
 
 			profileRoutes := userRoutes.Group("/profile")
 			{
-				profileRoutes.POST("/",  controller.GetUserByEmail)
+				profileRoutes.POST("/", controller.GetUserByEmail)
 				profileRoutes.POST("/profile-pic", controller.AddProfilePic)
 				profileRoutes.PUT("/role/:id", controller.UpdateUserRoleById)
-				profileRoutes.GET("/getid",  controller.GetUserIdByEmail)
+				profileRoutes.GET("/getid", controller.GetUserIdByEmail)
 			}
 
 			locationRoutes := userRoutes.Group("/locations")
