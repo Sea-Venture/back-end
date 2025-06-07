@@ -72,6 +72,7 @@ func LoginUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login successful",
+		"token":   req.Token,
 		"user":    user,
 	})
 }
@@ -171,4 +172,35 @@ func UpdateUserRoleById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User role updated successfully"})
+}
+
+func GetEmailByToken(c *gin.Context) {
+	var req struct {
+		Token string `json:"token" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	parser := &jwt.Parser{}
+	parsedToken, _, err := parser.ParseUnverified(req.Token, jwt.MapClaims{})
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
+		return
+	}
+
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	email, ok := claims["email"].(string)
+	if !ok || email == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Email not found in token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"email": email})
 }
