@@ -112,19 +112,17 @@ func ProtectedEndpoint(c *gin.Context) {
 }
 
 func GetUserByEmail(c *gin.Context) {
-	email, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	email := c.Query("email")
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
 		return
 	}
-
-	user, err := service.GetUserByEmail(email.(string))
+	user, err := service.GetUserByEmail(email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func GetUserIdByEmail(c *gin.Context) {

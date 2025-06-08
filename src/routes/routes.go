@@ -25,7 +25,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) {
 
 			profileRoutes := userRoutes.Group("/profile")
 			{
-				profileRoutes.POST("/", controller.GetUserByEmail)
+				profileRoutes.GET("/email", controller.GetUserByEmail)
 				profileRoutes.POST("/profile-pic", controller.AddProfilePic)
 				profileRoutes.PUT("/role/:id", controller.UpdateUserRoleById)
 				profileRoutes.GET("/getid", controller.GetUserIdByEmail)
