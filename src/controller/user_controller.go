@@ -126,13 +126,13 @@ func GetUserByEmail(c *gin.Context) {
 }
 
 func GetUserIdByEmail(c *gin.Context) {
-	email, exists := c.Get("email")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	email := c.Query("email")
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is required"})
 		return
 	}
 
-	userID, err := service.GetUserIdByEmail(email.(string))
+	userID, err := service.GetUserIdByEmail(email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
