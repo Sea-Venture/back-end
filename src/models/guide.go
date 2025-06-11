@@ -13,4 +13,5 @@ type Guide struct {
 	NIC_Photo string `json:"nic_photo"`
 	Phone_Number string `json:"phone_number"`
 	Beach_ID 		uint `json:"beach_id"`
+	User_ID 		uint `json:"user_id"`
 }
